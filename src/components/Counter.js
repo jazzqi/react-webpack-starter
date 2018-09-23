@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import Child from "./Child";
+import PureChild from "./PureChild";
 
 const ErrorComponent = () => <div>{props.ignore}</div>;
 
@@ -11,11 +13,20 @@ export default class Counter extends Component {
     this.state = {
       counter: 0,
       seed: 0,
-      initializing: true
+      initializing: true,
+      obj: {
+        value: 0
+      }
     };
 
     this.increment = () => this.setState({ counter: this.state.counter + 1 });
     this.decrement = () => this.setState({ counter: this.state.counter - 1 });
+
+    this.updateObj = () => {
+      var temp = this.state.obj;
+      temp.value = Math.random();
+      this.setState({ obj: temp });
+    };
   }
 
   // Called before anyother methods
@@ -44,7 +55,6 @@ export default class Counter extends Component {
         initializing: false
       });
     }, 1000);
-    console.log("-------------------");
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -77,6 +87,20 @@ export default class Counter extends Component {
         <button onClick={this.decrement}>Decrement</button>
         <div className="counter">Counter: {this.state.counter}</div>
         {this.props.showErrorComponent ? <ErrorComponent /> : null}
+
+        <button onClick={this.updateObj}>
+          Update Obj In PureComponent
+        </button>
+
+        <Child obj={this.state.obj}/>
+        <PureChild obj={this.state.obj}
+          /**
+            * Send anonymous new function or object will trigger PureComponent's renderring
+            * each render will always generate new instance
+            */
+          // func={()=>{}}
+          // object={{}}
+        />
       </div>
     );
   }
